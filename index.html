@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Slider</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: black;
+    overflow: hidden;
+    font-family: sans-serif;
+}
+
+/* Start Screen */
+.start-screen {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+/* Buttons */
+.btn {
+    background: black;
+    color: white;
+    padding: 12px 28px;
+    font-size: 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid;
+    border-image: linear-gradient(45deg, black, white) 1;
+}
+
+/* Stop button */
+.stop-btn {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+    padding: 8px 16px;
+    font-size: 14px;
+    z-index: 200;
+    display: none;
+}
+
+/* 3D container */
+.scene {
+    width: 100vw;
+    height: 100vh;
+    perspective: 1200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* carousel */
+.carousel {
+    width: 60vw;
+    height: 34vw;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 2s ease-in-out;
+}
+
+/* cards */
+.card {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="start-screen" id="startScreen">
+    <button class="btn" onclick="startSlider()">Start</button>
+</div>
+
+<button class="btn stop-btn" id="stopBtn" onclick="stopSlider()">Stop</button>
+
+<div class="scene">
+    <div class="carousel" id="carousel">
+        <div class="card"><img src="Engagement.png"></div>
+        <div class="card"><img src="GoldElegant.png"></div>
+        <div class="card"><img src="LATE NIGHT.png"></div>
+    </div>
+</div>
+
+<script>
+const carousel = document.getElementById("carousel");
+const cards = document.querySelectorAll(".card");
+const stopBtn = document.getElementById("stopBtn");
+const startScreen = document.getElementById("startScreen");
+
+let index = 0;
+const total = cards.length;
+const angle = 360 / total;
+let interval;
+
+/* arrange cards */
+cards.forEach((card, i) => {
+    card.style.transform = `rotateY(${i * angle}deg) translateZ(400px)`;
+});
+
+/* rotate */
+function rotateCarousel() {
+    index++;
+    carousel.style.transform = `rotateY(${-index * angle}deg)`;
+}
+
+/* start */
+function startSlider() {
+    startScreen.style.display = "none";
+    stopBtn.style.display = "block";
+
+    let elem = document.documentElement;
+
+    if (elem.requestFullscreen) elem.requestFullscreen();
+    else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+    else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
+
+    if (!interval) {
+        interval = setInterval(rotateCarousel, 10000);
+    }
+}
+
+/* stop */
+function stopSlider() {
+    clearInterval(interval);
+    interval = null;
+
+    stopBtn.style.display = "none";
+    startScreen.style.display = "flex";
+
+    if (document.exitFullscreen) document.exitFullscreen();
+}
+</script>
+
+</body>
+</html>
